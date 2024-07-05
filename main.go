@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -33,7 +34,8 @@ func encryptPassword() {
 	secret := prompt("Enter secret: ")
 	password := prompt("Enter password to encrypt: ")
 
-	encrypted, err := encrypt([]byte(secret), password)
+	key := deriveKey(secret)
+	encrypted, err := encrypt(key, password)
 	if err != nil {
 		fmt.Println("Error encrypting password:", err)
 		return
@@ -46,13 +48,19 @@ func decryptPassword() {
 	secret := prompt("Enter secret: ")
 	encrypted := prompt("Enter encrypted password: ")
 
-	decrypted, err := decrypt([]byte(secret), encrypted)
+	key := deriveKey(secret)
+	decrypted, err := decrypt(key, encrypted)
 	if err != nil {
 		fmt.Println("Error decrypting password:", err)
 		return
 	}
 
 	fmt.Println("Decrypted password:", decrypted)
+}
+
+func deriveKey(secret string) []byte {
+	hash := sha256.Sum256([]byte(secret))
+	return hash[:]
 }
 
 func encrypt(key []byte, text string) (string, error) {
