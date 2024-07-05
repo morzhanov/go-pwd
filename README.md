@@ -1,4 +1,4 @@
-# vpnc
+# go-pwd
 
 Tool to encode/decode passwords
 
