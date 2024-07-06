@@ -11,6 +11,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -39,6 +41,13 @@ func encryptPassword() {
 	if err != nil {
 		fmt.Println("Error encrypting password:", err)
 		return
+	}
+
+	bcryptRes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err == nil {
+		fmt.Printf("bcrypt: %s\n", string(bcryptRes))
+	} else {
+		fmt.Printf("bcrypt failed: %s\n", err.Error())
 	}
 
 	fmt.Println("Encrypted password:", encrypted)
